@@ -1,0 +1,21 @@
+workflows:
+  naba-ios-unsigned:
+    name: NABA iOS unsigned IPA
+    max_build_duration: 30
+    environment:
+      xcode: latest
+    scripts:
+      - name: Install JavaScript dependencies
+        script: |
+          corepack enable
+          corepack prepare pnpm@10.6.2 --activate
+          pnpm install --no-frozen-lockfile
+      - name: Install CocoaPods dependencies
+        script: |
+          cd ios
+          pod install
+      - name: Build unsigned IPA
+        script: bash scripts/build-unsigned-ipa.sh
+    artifacts:
+      - build/NABA-unsigned.ipa
+      - build/NABA-unsigned.xcarchive
