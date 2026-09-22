@@ -9,6 +9,7 @@ on:
 jobs:
   build-ios:
     runs-on: macos-14
+
     steps:
       - name: Checkout project
         uses: actions/checkout@v4
@@ -22,18 +23,41 @@ jobs:
         run: pnpm install --no-frozen-lockfile
 
       - name: Install CocoaPods
-        run: sudo gem install cocoapods --no-document
+        run: |
+          sudo gem install cocoapods --no-document
+          pod --version
 
       - name: Install CocoaPods dependencies
+        continue-on-error: true
         run: |
+          set -o pipefail
           cd ios
-          pod install --repo-update
+          pod install --repo-update --verbose 2>&1 | tee ../pod-install.log
+
+      - name: Upload CocoaPods log
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: NABA-cocoapods-log
+          path: pod-install.log
+          if-no-files-found: warn
+
+      - name: Stop if CocoaPods failed
+        run: |
+          test -f ios/Pods/Manifest.lock
 
       - name: Build unsigned IPA
-        run: bash scripts/build-unsigned-ipa.sh
+        run: |
+          bash scripts/build-unsigned-ipa.sh
+
+      - name: Verify unsigned IPA
+        run: |
+          test -f build/NABA-unsigned.ipa
+          ls -lh build/NABA-unsigned.ipa
 
       - name: Upload unsigned IPA
         uses: actions/upload-artifact@v4
         with:
           name: NABA-unsigned-IPA
           path: build/NABA-unsigned.ipa
+          if-no-files-found: error
