@@ -21,10 +21,13 @@ jobs:
       - name: Install JavaScript dependencies
         run: pnpm install --no-frozen-lockfile
 
+      - name: Install CocoaPods
+        run: sudo gem install cocoapods --no-document
+
       - name: Install CocoaPods dependencies
         run: |
           cd ios
-          pod install
+          pod install --repo-update
 
       - name: Build unsigned IPA
         run: bash scripts/build-unsigned-ipa.sh
