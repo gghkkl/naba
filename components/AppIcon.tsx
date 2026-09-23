@@ -22,7 +22,9 @@ export type AppIconName =
   | "search"
   | "sun"
   | "moon"
-  | "x";
+  | "x"
+  | "heart"
+  | "bookmark";
 
 type AppIconProps = {
   name: AppIconName;
@@ -45,6 +47,8 @@ const paths = {
   "trash-2": "M3 6H21M8 6V4H16V6M6 6L7 20H17L18 6M10 10V17M14 10V17",
   check: "M5 12L10 17L19 7",
   info: "M12 16V11M12 8H12.01",
+  heart: "M20.8 8.6C20.8 13.5 12 19 12 19S3.2 13.5 3.2 8.6C3.2 5.9 5.1 4 7.5 4C9 4 10.4 4.8 12 6.2C13.6 4.8 15 4 16.5 4C18.9 4 20.8 5.9 20.8 8.6Z",
+  bookmark: "M6 4H18V21L12 17.3L6 21V4Z",
 } as const;
 
 export function AppIcon({
