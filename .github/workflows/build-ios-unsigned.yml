@@ -8,11 +8,31 @@ on:
 
 jobs:
   build-ios:
-    runs-on: macos-14
+    runs-on: macos-15
 
     steps:
       - name: Checkout project
         uses: actions/checkout@v4
+
+      - name: Select compatible Xcode
+        run: |
+          set -e
+
+          for xcode_path in \
+            "/Applications/Xcode_16.4.app/Contents/Developer" \
+            "/Applications/Xcode_16.3.app/Contents/Developer" \
+            "/Applications/Xcode_16.2.app/Contents/Developer" \
+            "/Applications/Xcode_16.1.app/Contents/Developer" \
+            "/Applications/Xcode.app/Contents/Developer"
+          do
+            if [ -d "$xcode_path" ]; then
+              sudo xcode-select -s "$xcode_path"
+              break
+            fi
+          done
+
+          echo "Selected Xcode:"
+          xcodebuild -version
 
       - name: Install pnpm
         run: |
