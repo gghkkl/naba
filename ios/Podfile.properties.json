@@ -3,6 +3,7 @@
   "EX_DEV_CLIENT_NETWORK_INSPECTOR": "true",
   "expo.inlineModules.watchedDirectories": "[]",
   "expo.inlineModules.xcodeProjectTargets": "{\"mainTarget\":\"NABA\",\"targets\":[]}",
+  "ios.deploymentTarget": "17.0",
   "ios.buildReactNativeFromSource": "true",
   "EXPO_USE_PRECOMPILED_MODULES": "false"
 }
