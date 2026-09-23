@@ -8,7 +8,9 @@ import React, {
   useMemo,
   useState,
 } from "react";
+import { useAuth } from "@clerk/expo";
 import { LibraryBook } from "@/data/library";
+import { apiFetch } from "@/lib/api";
 
 const STORAGE_KEY = "@naba/library-state-v1";
 const DOWNLOAD_DIRECTORY = `${FileSystem.documentDirectory ?? ""}naba-library/`;
@@ -30,9 +32,14 @@ type LibrarySnapshot = {
 
 type LibraryContextValue = LibrarySnapshot & {
   ready: boolean;
+  preferencesReady: boolean;
+  favoriteBookIds: Record<string, true>;
+  savedBookIds: Record<string, true>;
   setProgress: (bookId: string, page: number) => void;
   downloadBook: (book: LibraryBook) => Promise<void>;
   deleteDownload: (bookId: string) => Promise<void>;
+  toggleFavorite: (bookId: string) => Promise<void>;
+  toggleSavedBook: (bookId: string) => Promise<void>;
 };
 
 const initialSnapshot: LibrarySnapshot = {
@@ -56,8 +63,12 @@ function pageDirectoryFor(bookId: string) {
 }
 
 export function LibraryProvider({ children }: { children: React.ReactNode }) {
+  const { isSignedIn } = useAuth();
   const [snapshot, setSnapshot] = useState<LibrarySnapshot>(initialSnapshot);
   const [ready, setReady] = useState(false);
+  const [preferencesReady, setPreferencesReady] = useState(!isSignedIn);
+  const [favoriteBookIds, setFavoriteBookIds] = useState<Record<string, true>>({});
+  const [savedBookIds, setSavedBookIds] = useState<Record<string, true>>({});
 
   useEffect(() => {
     let active = true;
@@ -85,6 +96,42 @@ export function LibraryProvider({ children }: { children: React.ReactNode }) {
       active = false;
     };
   }, []);
+
+  useEffect(() => {
+    let active = true;
+    if (!isSignedIn) {
+      setFavoriteBookIds({});
+      setSavedBookIds({});
+      setPreferencesReady(true);
+      return () => {
+        active = false;
+      };
+    }
+
+    setPreferencesReady(false);
+    apiFetch<{ favoriteBookIds: string[]; savedBookIds: string[] }>("/api/me/preferences")
+      .then((data) => {
+        if (!active) return;
+        setFavoriteBookIds(
+          Object.fromEntries(data.favoriteBookIds.map((bookId) => [bookId, true])),
+        );
+        setSavedBookIds(
+          Object.fromEntries(data.savedBookIds.map((bookId) => [bookId, true])),
+        );
+      })
+      .catch(() => {
+        if (!active) return;
+        setFavoriteBookIds({});
+        setSavedBookIds({});
+      })
+      .finally(() => {
+        if (active) setPreferencesReady(true);
+      });
+
+    return () => {
+      active = false;
+    };
+  }, [isSignedIn]);
 
   const persist = useCallback((next: LibrarySnapshot) => {
     setSnapshot(next);
@@ -280,15 +327,67 @@ export function LibraryProvider({ children }: { children: React.ReactNode }) {
     [persist, snapshot],
   );
 
+  const toggleFavorite = useCallback(
+    async (bookId: string) => {
+      if (!isSignedIn) throw new Error("سجّل الدخول لحفظ الكتب في حسابك");
+      const active = favoriteBookIds[bookId] === true;
+      await apiFetch(`/api/me/favorites/${encodeURIComponent(bookId)}`, {
+        method: active ? "DELETE" : "PUT",
+        body: "{}",
+      });
+      setFavoriteBookIds((current) => {
+        const next = { ...current };
+        if (active) delete next[bookId];
+        else next[bookId] = true;
+        return next;
+      });
+    },
+    [favoriteBookIds, isSignedIn],
+  );
+
+  const toggleSavedBook = useCallback(
+    async (bookId: string) => {
+      if (!isSignedIn) throw new Error("سجّل الدخول لحفظ الكتب في حسابك");
+      const active = savedBookIds[bookId] === true;
+      await apiFetch(`/api/me/saved-books/${encodeURIComponent(bookId)}`, {
+        method: active ? "DELETE" : "PUT",
+        body: "{}",
+      });
+      setSavedBookIds((current) => {
+        const next = { ...current };
+        if (active) delete next[bookId];
+        else next[bookId] = true;
+        return next;
+      });
+    },
+    [isSignedIn, savedBookIds],
+  );
+
   const value = useMemo(
     () => ({
       ...snapshot,
       ready,
+      preferencesReady,
+      favoriteBookIds,
+      savedBookIds,
       setProgress,
       downloadBook,
       deleteDownload,
+      toggleFavorite,
+      toggleSavedBook,
     }),
-    [deleteDownload, downloadBook, ready, setProgress, snapshot],
+    [
+      deleteDownload,
+      downloadBook,
+      favoriteBookIds,
+      preferencesReady,
+      ready,
+      savedBookIds,
+      setProgress,
+      snapshot,
+      toggleFavorite,
+      toggleSavedBook,
+    ],
   );
 
   return <LibraryCtx.Provider value={value}>{children}</LibraryCtx.Provider>;
