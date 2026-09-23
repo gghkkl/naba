@@ -18,8 +18,8 @@
       "package": "com.anonymous.naba",
       "versionCode": 4,
       "adaptiveIcon": {
-        "foregroundImage": "./assets/images/icon.png",
-        "backgroundColor": "#F6F3EA"
+        "foregroundImage": "./assets/images/icon-foreground.png",
+        "backgroundColor": "#050505"
       }
     },
     "web": {
