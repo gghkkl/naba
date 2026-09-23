@@ -67,8 +67,22 @@ jobs:
           test -f ios/Pods/Manifest.lock
 
       - name: Build unsigned IPA
+        continue-on-error: true
         run: |
-          bash scripts/build-unsigned-ipa.sh
+          set -o pipefail
+          bash scripts/build-unsigned-ipa.sh 2>&1 | tee xcodebuild.log
+
+      - name: Upload Xcode build log
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: NABA-xcodebuild-log
+          path: xcodebuild.log
+          if-no-files-found: warn
+
+      - name: Stop if IPA build failed
+        run: |
+          test -f build/NABA-unsigned.ipa
 
       - name: Verify unsigned IPA
         run: |
