@@ -8,7 +8,7 @@ on:
 
 jobs:
   build-ios:
-    runs-on: macos-15
+    runs-on: macos-26
 
     steps:
       - name: Checkout project
@@ -19,10 +19,13 @@ jobs:
           set -e
 
           for xcode_path in \
-            "/Applications/Xcode_16.4.app/Contents/Developer" \
-            "/Applications/Xcode_16.3.app/Contents/Developer" \
-            "/Applications/Xcode_16.2.app/Contents/Developer" \
-            "/Applications/Xcode_16.1.app/Contents/Developer" \
+            "/Applications/Xcode_26.6.app/Contents/Developer" \
+            "/Applications/Xcode_26.5.app/Contents/Developer" \
+            "/Applications/Xcode_26.4.1.app/Contents/Developer" \
+            "/Applications/Xcode_26.4.app/Contents/Developer" \
+            "/Applications/Xcode_26.3.app/Contents/Developer" \
+            "/Applications/Xcode_26.2.app/Contents/Developer" \
+            "/Applications/Xcode_26.1.app/Contents/Developer" \
             "/Applications/Xcode.app/Contents/Developer"
           do
             if [ -d "$xcode_path" ]; then
@@ -33,6 +36,9 @@ jobs:
 
           echo "Selected Xcode:"
           xcodebuild -version
+
+          echo "Selected Swift:"
+          swift --version
 
       - name: Install pnpm
         run: |
