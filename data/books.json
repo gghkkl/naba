@@ -22,13 +22,13 @@
     "description": "كتاب يروي تجربة ثلاثة وعشرين شابًا إيرانيًا خلال الحرب، وما مرّوا به من أحداث قاسية بعد وقوعهم في الأسر.",
     "releaseDate": "2017م – 1438هـ",
     "publisher": "دار المعارف الإسلامية الثقافية – بيروت",
-    "status": "draft",
+    "status": "published",
     "originalLanguage": "الفارسية",
     "translation": "إيمان صالح، إعداد: مركز المعارف للترجمة",
     "coverUrl": "https://ia600508.us.archive.org/14/items/images_20260921_2300/images.jpg",
     "pdfUrl": "https://ia600709.us.archive.org/34/items/pdf_fata23/pdf_fata23.pdf",
     "pageUrlTemplate": "https://archive.org/download/pdf_fata23/pdf_fata23.pdf#page={page}",
     "pageCount": 254,
-    "updatedAt": "2026-10-01T13:21:28.438Z"
+    "updatedAt": "2026-10-02T01:02:07.634Z"
   }
 ]
