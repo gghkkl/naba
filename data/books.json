@@ -1,19 +1,19 @@
 [
   {
     "id": "salam-ibrahim",
-    "title": "سلامٌ",
+    "title": "سلامٌ على إبراهيم",
     "author": "إعداد مجموعة الشهيد إبراهيم هادي الثقافية",
     "description": "سيرة مؤثرة توثّق حياة الشهيد إبراهيم هادي، من طفولته ونشأته ورياضته إلى مسيرته في الثورة والدفاع المقدس.",
     "releaseDate": "2017م – 1438هـ، الطبعة الأولى",
     "publisher": "دار المعارف الإسلامية الثقافية",
-    "status": "draft",
+    "status": "published",
     "originalLanguage": "الفارسية",
     "translation": "مركز المعارف للترجمة",
     "coverUrl": "https://ia800701.us.archive.org/BookReader/BookReaderImages.php?id=20260921_20260921_0225&itemPath=%2F1%2Fitems%2F20260921_20260921_0225&server=ia800701.us.archive.org&page=n0.jpg",
     "pdfUrl": "https://archive.org/download/20260921_20260921_0225/%D8%B3%D9%84%D8%A7%D9%85%20%D8%B9%D9%84%D9%89%20%D8%A7%CC%95%D8%A8%D8%B1%D8%A7%D9%87%D9%8A%D9%85.pdf",
     "pageUrlTemplate": "https://ia800701.us.archive.org/BookReader/BookReaderImages.php?id=20260921_20260921_0225&itemPath=%2F1%2Fitems%2F20260921_20260921_0225&server=ia800701.us.archive.org&page=n{page}.jpg",
     "pageCount": 304,
-    "updatedAt": "2026-10-06T19:02:57.902Z"
+    "updatedAt": "2026-10-09T05:17:12.250Z"
   },
   {
     "id": "olaaek-al-thalatha-wal-ishroon",
