@@ -11,13 +11,14 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { AppIcon } from "@/components/AppIcon";
 import { LibraryPageViewer } from "@/components/LibraryPageViewer";
 import { ReaderPageControls } from "@/components/ReaderPageControls";
-import { getLibraryBook } from "@/data/library";
+import { useRemoteBooks } from "@/hooks/useRemoteBooks";
 import { useLibrary } from "@/context/LibraryContext";
 import { useTheme } from "@/context/ThemeContext";
 
 export default function ReaderScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
-  const book = getLibraryBook(id ?? "");
+  const { books } = useRemoteBooks();
+  const book = books.find((item) => item.id === id) ?? null;
   const insets = useSafeAreaInsets();
   const { colors } = useTheme();
   const { progress, downloads, setProgress } = useLibrary();
@@ -53,14 +54,6 @@ export default function ReaderScreen() {
         onPageChange={handlePageChange}
       />
       <View style={[styles.header, { top: topPad + 10 }]}>
-        <TouchableOpacity
-          style={[styles.back, { backgroundColor: colors.glass, borderColor: colors.glassBorder }]}
-          onPress={() => router.back()}
-          activeOpacity={0.8}
-          accessibilityLabel="العودة إلى تفاصيل الكتاب"
-        >
-          <AppIcon name="arrow-right" size={19} color={colors.foreground} />
-        </TouchableOpacity>
         <View style={[styles.titlePlate, { backgroundColor: colors.glass }]}>
           <Text style={[styles.title, { color: colors.foreground }]} numberOfLines={1}>
             {book.title}
@@ -69,6 +62,14 @@ export default function ReaderScreen() {
             <Text style={[styles.offline, { color: colors.secondary }]}>بدون اتصال</Text>
           ) : null}
         </View>
+        <TouchableOpacity
+          style={[styles.back, { backgroundColor: colors.glass, borderColor: colors.glassBorder }]}
+          onPress={() => router.back()}
+          activeOpacity={0.8}
+          accessibilityLabel="العودة إلى تفاصيل الكتاب"
+        >
+          <AppIcon name="arrow-right" size={19} color={colors.foreground} />
+        </TouchableOpacity>
       </View>
       <ReaderPageControls
         page={page}

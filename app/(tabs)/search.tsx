@@ -13,7 +13,8 @@ import { router } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import * as Haptics from "expo-haptics";
 import { AppIcon } from "@/components/AppIcon";
-import { getBookCoverSource, LIBRARY_BOOKS } from "@/data/library";
+import { getBookCoverSource } from "@/data/library";
+import { useRemoteBooks } from "@/hooks/useRemoteBooks";
 import { useLibrary } from "@/context/LibraryContext";
 import { useTheme } from "@/context/ThemeContext";
 
@@ -21,19 +22,20 @@ export default function SearchScreen() {
   const insets = useSafeAreaInsets();
   const { colors } = useTheme();
   const { downloads } = useLibrary();
+  const { books } = useRemoteBooks();
   const [query, setQuery] = useState("");
   const topPad = Platform.OS === "web" ? 67 : insets.top;
 
   const results = useMemo(() => {
     const normalized = query.trim().toLocaleLowerCase();
     if (!normalized) return [];
-    return LIBRARY_BOOKS.filter((book) =>
+    return books.filter((book) =>
       [book.title, book.author, book.description, book.publisher]
         .join(" ")
         .toLocaleLowerCase()
         .includes(normalized),
     );
-  }, [query]);
+  }, [books, query]);
 
   return (
     <View style={[styles.root, { backgroundColor: colors.background }]}>

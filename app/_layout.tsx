@@ -35,7 +35,10 @@ function RootLayoutNav() {
       <Stack screenOptions={{ headerShown: false }}>
         <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
         <Stack.Screen name="book/[id]" options={{ headerShown: false }} />
-        <Stack.Screen name="reader/[id]" options={{ headerShown: false }} />
+        <Stack.Screen
+          name="reader/[id]"
+          options={{ headerShown: false, gestureEnabled: false }}
+        />
       </Stack>
     </>
   );
@@ -54,8 +57,6 @@ export default function RootLayout() {
       SplashScreen.hideAsync();
     }
   }, [fontsLoaded, fontError]);
-
-  if (!fontsLoaded && !fontError) return null;
 
   return (
     <SafeAreaProvider>

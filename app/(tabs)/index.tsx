@@ -16,24 +16,27 @@ import { AppIcon } from "@/components/AppIcon";
 import { getBookCoverSource, NABA_BOOK } from "@/data/library";
 import { useLibrary } from "@/context/LibraryContext";
 import { useTheme } from "@/context/ThemeContext";
+import { useRemoteBooks } from "@/hooks/useRemoteBooks";
 
 export default function HomeScreen() {
   const insets = useSafeAreaInsets();
   const { colors, mode, toggleTheme } = useTheme();
   const { progress, downloads } = useLibrary();
+  const { books } = useRemoteBooks();
+  const featuredBook = books.find((book) => book.id === NABA_BOOK.id) ?? books[0] ?? NABA_BOOK;
   const topPad = Platform.OS === "web" ? 67 : insets.top;
-  const currentPage = progress[NABA_BOOK.id];
+  const currentPage = progress[featuredBook.id];
   const hasStarted = typeof currentPage === "number" && currentPage > 1;
   const percentage = currentPage
-    ? Math.min(100, Math.round((currentPage / NABA_BOOK.pageCount) * 100))
+    ? Math.min(100, Math.round((currentPage / featuredBook.pageCount) * 100))
     : 0;
-  const download = downloads[NABA_BOOK.id];
+  const download = downloads[featuredBook.id];
   const isDownloaded = download?.status === "downloaded";
-  const coverSource = getBookCoverSource(NABA_BOOK, download?.localCoverUri);
+  const coverSource = getBookCoverSource(featuredBook, download?.localCoverUri);
 
   const openReader = () => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-    router.push(`/reader/${NABA_BOOK.id}` as any);
+    router.push(`/reader/${featuredBook.id}` as any);
   };
 
   return (
@@ -119,13 +122,13 @@ export default function HomeScreen() {
               style={[styles.bookTitle, { color: colors.foreground }]}
               numberOfLines={2}
             >
-              {NABA_BOOK.title}
+              {featuredBook.title}
             </Text>
             <Text
               style={[styles.bookAuthor, { color: colors.mutedForeground }]}
               numberOfLines={1}
             >
-              {NABA_BOOK.author}
+              {featuredBook.author}
             </Text>
             {hasStarted ? (
               <View
@@ -148,7 +151,7 @@ export default function HomeScreen() {
               <Text
                 style={[styles.bookMeta, { color: colors.mutedForeground }]}
               >
-                {NABA_BOOK.pageCount} صفحة · {NABA_BOOK.status}
+                {featuredBook.pageCount} صفحة · {featuredBook.status}
               </Text>
             )}
             <View style={styles.cardBottom}>

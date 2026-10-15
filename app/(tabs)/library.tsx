@@ -13,7 +13,8 @@ import { router } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import * as Haptics from "expo-haptics";
 import { AppIcon } from "@/components/AppIcon";
-import { getBookCoverSource, LIBRARY_BOOKS } from "@/data/library";
+import { getBookCoverSource } from "@/data/library";
+import { useRemoteBooks } from "@/hooks/useRemoteBooks";
 import { useTheme } from "@/context/ThemeContext";
 import { useNetworkStatus } from "@/hooks/useNetworkStatus";
 
@@ -21,6 +22,7 @@ export default function LibraryScreen() {
   const insets = useSafeAreaInsets();
   const { width } = useWindowDimensions();
   const { colors } = useTheme();
+  const { books } = useRemoteBooks();
   const { isChecking, isOffline, isRefreshing, refresh } = useNetworkStatus();
   const topPad = Platform.OS === "web" ? 67 : insets.top;
   const cardWidth = (width - 52) / 2;
@@ -41,7 +43,7 @@ export default function LibraryScreen() {
         <View style={[styles.countPill, { backgroundColor: colors.secondarySoft }]}>
           <AppIcon name="book-open" size={16} color={colors.secondary} />
           <Text style={[styles.countText, { color: colors.secondary }]}>
-            {LIBRARY_BOOKS.length} كتاب
+            {books.length} كتاب
           </Text>
         </View>
       </View>
@@ -91,7 +93,7 @@ export default function LibraryScreen() {
         </View>
       ) : (
         <FlatList
-          data={LIBRARY_BOOKS}
+          data={books}
           numColumns={2}
           keyExtractor={(item) => item.id}
           contentContainerStyle={[
@@ -118,7 +120,11 @@ export default function LibraryScreen() {
                   { backgroundColor: colors.card, borderColor: colors.glassBorder },
                 ]}
               >
-                <Image source={getBookCoverSource(item)} style={styles.cover} resizeMode="cover" />
+                <Image
+                  source={getBookCoverSource(item)}
+                  style={styles.cover}
+                  resizeMode="contain"
+                />
                 <View style={[styles.coverShade, { backgroundColor: colors.scrim }]} />
                 <View style={styles.coverMark}>
                   <Text style={styles.coverMarkText}>ن</Text>
@@ -195,7 +201,8 @@ const styles = StyleSheet.create({
     elevation: 7,
   },
   cover: {
-    ...StyleSheet.absoluteFill,
+    width: "100%",
+    height: "100%",
   },
   coverShade: {
     ...StyleSheet.absoluteFill,

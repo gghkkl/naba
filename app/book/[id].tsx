@@ -1,4 +1,3 @@
-import React from "react";
 import {
   ActivityIndicator,
   Image,
@@ -13,16 +12,22 @@ import { router, useLocalSearchParams } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import * as Haptics from "expo-haptics";
 import { AppIcon } from "@/components/AppIcon";
-import { getBookCoverSource, getLibraryBook } from "@/data/library";
+import { getBookCoverSource } from "@/data/library";
+import { useRemoteBooks } from "@/hooks/useRemoteBooks";
 import { useLibrary } from "@/context/LibraryContext";
 import { useTheme } from "@/context/ThemeContext";
 
 export default function BookDetailsScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
-  const book = getLibraryBook(id ?? "");
+  const { books } = useRemoteBooks();
+  const book = books.find((item) => item.id === id) ?? null;
   const insets = useSafeAreaInsets();
   const { colors } = useTheme();
-  const { downloads, progress, downloadBook } = useLibrary();
+  const {
+    downloads,
+    progress,
+    downloadBook,
+  } = useLibrary();
   const download = book ? downloads[book.id] : undefined;
   const currentPage = book ? progress[book.id] ?? 1 : 1;
 
@@ -36,7 +41,6 @@ export default function BookDetailsScreen() {
 
   const isDownloading = download?.status === "downloading";
   const isDownloaded = download?.status === "downloaded";
-
   return (
     <View style={[styles.root, { backgroundColor: colors.background }]}>
       <ScrollView
@@ -50,6 +54,7 @@ export default function BookDetailsScreen() {
         showsVerticalScrollIndicator={false}
       >
         <View style={styles.topBar}>
+          <Text style={[styles.topLabel, { color: colors.secondary }]}>تفاصيل الكتاب</Text>
           <TouchableOpacity
             style={[styles.iconButton, { backgroundColor: colors.glass }]}
             onPress={() => router.back()}
@@ -58,7 +63,6 @@ export default function BookDetailsScreen() {
           >
             <AppIcon name="arrow-right" size={20} color={colors.foreground} />
           </TouchableOpacity>
-          <Text style={[styles.topLabel, { color: colors.secondary }]}>تفاصيل الكتاب</Text>
         </View>
 
         <View style={styles.hero}>
@@ -122,7 +126,6 @@ export default function BookDetailsScreen() {
             </Text>
           </TouchableOpacity>
         </View>
-
         <View style={[styles.divider, { backgroundColor: colors.glassBorder }]} />
         <Text style={[styles.sectionTitle, { color: colors.foreground }]}>عن الكتاب</Text>
         <Text style={[styles.description, { color: colors.mutedForeground }]}>

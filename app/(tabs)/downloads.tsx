@@ -13,16 +13,18 @@ import { router } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import * as Haptics from "expo-haptics";
 import { AppIcon } from "@/components/AppIcon";
-import { getBookCoverSource, LIBRARY_BOOKS } from "@/data/library";
+import { getBookCoverSource } from "@/data/library";
+import { useRemoteBooks } from "@/hooks/useRemoteBooks";
 import { useLibrary } from "@/context/LibraryContext";
 import { useTheme } from "@/context/ThemeContext";
 
 export default function DownloadsScreen() {
   const insets = useSafeAreaInsets();
   const { colors } = useTheme();
+  const { books } = useRemoteBooks();
   const { downloads, deleteDownload, downloadBook } = useLibrary();
   const topPad = Platform.OS === "web" ? 67 : insets.top;
-  const downloadedBooks = LIBRARY_BOOKS.filter((book) => downloads[book.id]);
+  const downloadedBooks = books.filter((book) => downloads[book.id]);
 
   return (
     <View style={[styles.root, { backgroundColor: colors.background }]}>
